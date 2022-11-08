@@ -1,5 +1,4 @@
 from ast import walk
-from codecs import utf_16_be_encode, utf_16_decode, utf_16_encode
 import os
 from pickletools import unicodestring1
 import ebooklib
@@ -37,11 +36,6 @@ def prepbook(resetbook):
     for a0 in a:
         parser1.feed(a0.get_content().decode())
         b.append([a0.get_name(), parser1.data1])
-    print("****")
-    for b0 in b:
-        print(b0)
-        indx = b.index(b0)
-    print("****")
     zipfilename = "book1.epub"
     dir1 = 'epubbook'
     if os.path.exists(dir1) and resetbook:
@@ -58,11 +52,19 @@ def prepbook(resetbook):
             zip.extractall(dir1)
     else:
         pass
+    return b
 
 
 if __name__ == "__main__":
-    prepbook(True)
+    b = prepbook(True)
     print("\nFinished")
+    print("****")
+    for b0 in b:
+        print(b0)
+        # indx = b.index(b0)
+        # print(indx)
+    print("****")
+
 
 # f = open('./'+dir1+'/OEBPS/'+b[5][0], 'r', encoding='utf8')
 # # for i in f.readline():
