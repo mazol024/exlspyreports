@@ -27,24 +27,14 @@ class MyHTMLParser(HTMLParser):
             self.data1 = data
 
 
-def prepbook(resetbook):
+def prepbook():
     book1 = epub.read_epub("book1.epub")
     pg = book1.get_items_of_type(ebooklib.ITEM_DOCUMENT)
     a = list(pg)
-    b = []
-    parser1 = MyHTMLParser()
-    for a0 in a:
-        # mm = a0.get_content().decode()[
-        #     0:a0.get_content().decode().find("<p1")]
-        mm = a0.get_content().decode()
-        parser1.feed(mm)
-        b.append([a0.get_name(), parser1.data1])
-        print(
-            f"Parsed data type:  {type(parser1.data1)}\n  ")
-        # f"Parsed data type:  {type(parser1.data1)}\n { mm} ")
+
     zipfilename = "book1.epub"
     dir1 = 'epubbook'
-    # if os.path.exists(dir1) and resetbook:
+    # if os.path.exists(dir1):
     #     for root, dirs, files in os.walk(dir1, topdown=False):
     #         for name in files:
     #             os.remove(os.path.join(root, name))
@@ -58,24 +48,28 @@ def prepbook(resetbook):
     #         zip.extractall(dir1)
     # else:
     #     pass
-    return b
+    with ZipFile(zipfilename, 'r') as zip:
+        # print(zip.read())
+        b = zip.namelist()
+        print(type(b))
+        for a in b:
+            print(a)
+        print(zip.read(b[3]))
+    return a
 
 
 # @application.route('/readbook')
 def readbook():
-    b = prepbook(True)
+    b = prepbook()
     # return render_template('contents.html', chapters=b)
     return b
 
 
 if __name__ == "__main__":
-    b = prepbook(True)
+    b = prepbook()
     print("\nFinished")
     print("****")
-    for b0 in b:
-        print(b0)
-        # indx = b.index(b0)
-        # print(indx)
+
     print("****")
 
 
