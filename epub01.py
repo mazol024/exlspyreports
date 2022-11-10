@@ -13,13 +13,13 @@ class MyHTMLParser(HTMLParser):
     data1 = ''
 
     def handle_starttag(self, tag, attrs):
-        if tag == 'h1':
+        if tag == 'span':
             self.flag = True
         else:
             self.flag = False
 
     def handle_endtag(self, tag):
-        if tag == 'h1':
+        if tag == 'span':
             self.flag = False
 
     def handle_data(self, data):
@@ -34,24 +34,37 @@ def prepbook(resetbook):
     b = []
     parser1 = MyHTMLParser()
     for a0 in a:
-        parser1.feed(a0.get_content().decode())
+        # mm = a0.get_content().decode()[
+        #     0:a0.get_content().decode().find("<p1")]
+        mm = a0.get_content().decode()
+        parser1.feed(mm)
         b.append([a0.get_name(), parser1.data1])
+        print(
+            f"Parsed data type:  {type(parser1.data1)}\n  ")
+        # f"Parsed data type:  {type(parser1.data1)}\n { mm} ")
     zipfilename = "book1.epub"
     dir1 = 'epubbook'
-    if os.path.exists(dir1) and resetbook:
-        for root, dirs, files in os.walk(dir1, topdown=False):
-            for name in files:
-                os.remove(os.path.join(root, name))
-            for name in dirs:
-                os.rmdir(os.path.join(root, name))
-        with ZipFile(zipfilename, 'r') as zip:
-            zip.extractall(dir1)
-    elif not os.path.exists(dir1):
-        os.mkdir(dir1)
-        with ZipFile(zipfilename, 'r') as zip:
-            zip.extractall(dir1)
-    else:
-        pass
+    # if os.path.exists(dir1) and resetbook:
+    #     for root, dirs, files in os.walk(dir1, topdown=False):
+    #         for name in files:
+    #             os.remove(os.path.join(root, name))
+    #         for name in dirs:
+    #             os.rmdir(os.path.join(root, name))
+    #     with ZipFile(zipfilename, 'r') as zip:
+    #         zip.extractall(dir1)
+    # elif not os.path.exists(dir1):
+    #     os.mkdir(dir1)
+    #     with ZipFile(zipfilename, 'r') as zip:
+    #         zip.extractall(dir1)
+    # else:
+    #     pass
+    return b
+
+
+# @application.route('/readbook')
+def readbook():
+    b = prepbook(True)
+    # return render_template('contents.html', chapters=b)
     return b
 
 
