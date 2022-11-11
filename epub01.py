@@ -12,20 +12,6 @@ def prepbook():
     bookdir = 'templates/ebooks/2/'
     zipfilename = bookdir + os.listdir(bookdir)[0]
     print(f"fil1 -> {zipfilename}")
-    # if os.path.exists(dir1):
-    #     for root, dirs, files in os.walk(dir1, topdown=False):
-    #         for name in files:
-    #             os.remove(os.path.join(root, name))
-    #         for name in dirs:
-    #             os.rmdir(os.path.join(root, name))
-    #     with ZipFile(zipfilename, 'r') as zip:
-    #         zip.extractall(dir1)
-    # elif not os.path.exists(dir1):
-    #     os.mkdir(dir1)
-    #     with ZipFile(zipfilename, 'r') as zip:
-    #         zip.extractall(dir1)
-    # else:
-    #     pass
     with ZipFile(zipfilename, 'r') as zip:
         b = zip.namelist()
         soup = BeautifulSoup(
@@ -65,6 +51,21 @@ def prepbook():
                     z[k] = navpoint.navlabel.text
                     pp.append([z[k], k])
 
+    dumpdir = bookdir+'/dump/'
+    if os.path.exists(dumpdir) and False:
+        for root, dirs, files in os.walk(dumpdir, topdown=False):
+            for name in files:
+                os.remove(os.path.join(root, name))
+            for name in dirs:
+                os.rmdir(os.path.join(root, name))
+        with ZipFile(zipfilename, 'r') as zip:
+            zip.extractall(dumpdir)
+    elif not os.path.exists(dumpdir):
+        os.mkdir(dumpdir)
+        with ZipFile(zipfilename, 'r') as zip:
+            zip.extractall(dumpdir)
+    else:
+        pass
     return b
 
 
