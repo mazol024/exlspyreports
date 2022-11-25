@@ -1,17 +1,15 @@
 import os
+import shutil
 from pickletools import unicodestring1
 from zipfile import ZipFile
 from bs4 import BeautifulSoup
 
 
-def prepbook():
-    # book1 = epub.read_epub("book1.epub")
-    # pg = book1.get_items_of_type(ebooklib.ITEM_DOCUMENT)
-    # a = list(pg)
-
-    bookdir = 'templates/ebooks/2/'
+def get_toc(bookdir='templates/ebooks/2/'):
+    bookdir = bookdir
+    # bookdir = 'templates/ebooks/2/'
     zipfilename = bookdir + os.listdir(bookdir)[0]
-    print(f"fil1 -> {zipfilename}")
+    print(f"fil1 zipname : {zipfilename}")
     # if os.path.exists(dir1):
     #     for root, dirs, files in os.walk(dir1, topdown=False):
     #         for name in files:
@@ -27,7 +25,7 @@ def prepbook():
     # else:
     #     pass
     with ZipFile(zipfilename, 'r') as zip:
-        b = zip.namelist()
+
         soup = BeautifulSoup(
             zip.read('META-INF/container.xml'), features='xml')
         opf = dict(soup.find('rootfile').attrs)['full-path']
@@ -38,17 +36,21 @@ def prepbook():
 
         c = zip.read(opf)
         soup = BeautifulSoup(c, features='xml')
-        print(soup.find('dc:title').text)
+        print(" Title of the book : ", soup.find('dc:title').text)
         x, ncx = {}, None
         for item in soup.find('manifest').findAll('item'):
             d = dict(item.attrs)
             x[d['id']] = '{0}{1}'.format(basedir, d['href'])
+            if len(x) <= 5:
+                print(x, '\n')
             if d['media-type'] == 'application/x-dtbncx+xml':
+                ncx = '{0}{1}'.format(basedir, d['href'])
+            elif d['id'] == 'ncxtoc':
                 ncx = '{0}{1}'.format(basedir, d['href'])
         # for a in b:
         #     print(a)
         # print(zip.read(b[3]))
-        print(f"ncx  {ncx}")
+        print(f"ncx is  :  {ncx}")
         z = {}
         pp = []
         if ncx:
@@ -60,26 +62,50 @@ def prepbook():
                 k = navpoint.content.get('src', None)
                 # strip off any anchor text
                 # k = root + basedir + k.split('#')[0]
-                k = bookdir + basedir + k
                 if k:
+                    k = bookdir + basedir + k
                     z[k] = navpoint.navlabel.text
                     pp.append([z[k], k])
+            for li in soup.find('ol').findAll('li'):
+                pp.append([bookdir + basedir +
+                          li.find('a')['href'], li.text])
 
-    return b
+    return pp
 
 
-# @application.route('/readbook')
-def readbook():
-    b = prepbook()
-    # return render_template('contents.html', chapters=b)
-    return b
+# @application.route('/set_books')
+def set_books(basedir='templates/ebooks/'):
+    # check dir if new book here and unpuck it
+    listdirs = os.scandir(basedir)
+    numlist = [0]
+    flist = []
+    for i in listdirs:
+        if i.is_dir():
+            # print(i)
+            # print(os.path.basename(i))
+            numlist.append(int(os.path.basename(i)))
+        if i.is_file():
+            flist.append(i)
+    print(numlist)
+    maxnum = max(numlist)
+    print(maxnum, " next value -> ", maxnum+1)
+    print(basedir + str(maxnum + 1) + '/')
+    for f in flist:
+        maxnum += 1
+        os.makedirs(basedir+str(maxnum)+'/')
+        shutil.move(f, basedir+str(maxnum)+'/')
+        print("File moved!")
 
 
 if __name__ == "__main__":
-    b = prepbook()
+    basedir = 'templates/ebooks/'
+    set_books()
+    b = get_toc('templates/ebooks/1/')
     print("\nFinished")
-    print("****")
-
+    print("Returned data: ")
+    for i in b:
+        # print((i[0]).strip(), " -> ", i[1])
+        print(i)
     print("****")
 
 
