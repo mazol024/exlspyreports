@@ -72,8 +72,9 @@ def get_toc(bookdir='templates/ebooks/2/'):
 
     return pp
 
-
 # @application.route('/set_books')
+
+
 def set_books(basedir='templates/ebooks/'):
     # check dir if new book here and unpuck it
     listdirs = os.scandir(basedir)
