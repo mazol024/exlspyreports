@@ -2222,5 +2222,4 @@ Lib/site-packages/soupsieve-2.3.2.post1.dist-info/METADATA
 Lib/site-packages/soupsieve-2.3.2.post1.dist-info/RECORD
 Lib/site-packages/soupsieve-2.3.2.post1.dist-info/WHEEL
 Lib/site-packages/soupsieve-2.3.2.post1.dist-info/license_files/LICENSE.md
-templates/ebooks/1/Python Crash Course - Eric Matthes.epub
-templates/ebooks/2/Python for Everybody - Charles R Severance.epub
+templates/ebooks/*

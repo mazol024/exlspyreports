@@ -8,7 +8,10 @@ from bs4 import BeautifulSoup
 def get_toc(bookdir='templates/ebooks/2/'):
     bookdir = bookdir
     # bookdir = 'templates/ebooks/2/'
-    zipfilename = bookdir + os.listdir(bookdir)[0]
+    ff = os.scandir(bookdir)
+    for i in ff:
+        if i.is_file():
+            zipfilename = bookdir + i.name
     print(f"fil1 zipname : {zipfilename}")
     # if os.path.exists(dir1):
     #     for root, dirs, files in os.walk(dir1, topdown=False):
@@ -66,9 +69,10 @@ def get_toc(bookdir='templates/ebooks/2/'):
                     k = bookdir + basedir + k
                     z[k] = navpoint.navlabel.text
                     pp.append([z[k], k])
-            for li in soup.find('ol').findAll('li'):
-                pp.append([bookdir + basedir +
-                          li.find('a')['href'], li.text])
+            if len(pp) <= 1:
+                for li in soup.find('ol').findAll('li'):
+                    pp.append([bookdir + basedir +
+                               li.find('a')['href'], li.text])
 
     return pp
 
@@ -96,12 +100,17 @@ def set_books(basedir='templates/ebooks/'):
         os.makedirs(basedir+str(maxnum)+'/')
         shutil.move(f, basedir+str(maxnum)+'/')
         print("File moved!")
+        ff = os.scandir(basedir+str(maxnum)+'/')
+        for i in ff:
+            if i.is_file():
+                with ZipFile(i, 'r') as zip:
+                    zip.extractall(basedir+str(maxnum)+'/book/')
 
 
 if __name__ == "__main__":
     basedir = 'templates/ebooks/'
     set_books()
-    b = get_toc('templates/ebooks/1/')
+    b = get_toc('templates/ebooks/2/')
     print("\nFinished")
     print("Returned data: ")
     for i in b:
