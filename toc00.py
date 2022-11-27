@@ -29,7 +29,6 @@ def tocarray(ff):
         y.append(x[dict(item.attrs)['idref']])
     z = {}
     pp = []
-    lb = ''
     if ncx:
         # get titles from the toc
         fncx = open(root + ncx)
